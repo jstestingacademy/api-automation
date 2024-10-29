@@ -1,0 +1,30 @@
+Request method:	POST
+Request URI:	https://www.c2ta.co.in/api/insert.php
+Proxy:			<none>
+Request params:	<none>
+Query params:	<none>
+Form params:	<none>
+Path params:	<none>
+Headers:		Accept=*/*
+				Content-Type=text/plain; charset=ISO-8859-1
+Cookies:		<none>
+Multiparts:		<none>
+Body:
+JStestingacademy
+HTTP/1.1 200 OK
+Connection: Keep-Alive
+Keep-Alive: timeout=5, max=100
+access-control-allow-origin: *
+access-control-allow-methods: POST
+content-type: application/json; charset=UTF-8
+access-control-allow-headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With
+content-length: 79
+content-encoding: gzip
+vary: Accept-Encoding
+date: Tue, 22 Oct 2024 07:17:31 GMT
+server: LiteSpeed
+alt-svc: h3=":443"; ma=2592000, h3-29=":443"; ma=2592000, h3-Q050=":443"; ma=2592000, h3-Q046=":443"; ma=2592000, h3-Q043=":443"; ma=2592000, quic=":443"; ma=2592000; v="43,46"
+
+{
+    "message": "Please fill all the fields | title, body, author"
+}
