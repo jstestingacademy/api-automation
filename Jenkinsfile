@@ -16,13 +16,22 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t rest-assured-tests .'
+                script {
+                    echo 'Building Docker Image...'
+                    sh '''
+                        set -e
+                        docker build -t rest-assured-tests .
+                    '''
+                }
             }
         }
 
         stage('Run Tests in Docker') {
             steps {
-                sh 'docker-compose up --abort-on-container-exit'
+                script {
+                    echo 'Running tests in Docker...'
+                    sh 'docker-compose -f ./docker-compose.yml up --abort-on-container-exit'
+                }
             }
         }
 
@@ -44,8 +53,10 @@ pipeline {
         always {
             script {
                 echo 'Cleaning up Docker environment...'
-                sh 'docker-compose down || true'
-                sh 'docker rmi -f rest-assured-tests || true'
+                sh '''
+                    docker-compose -f ./docker-compose.yml down -v || true
+                    docker rmi -f rest-assured-tests || true
+                '''
             }
         }
     }
