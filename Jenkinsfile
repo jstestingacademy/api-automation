@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'linux-agent' // or simply 'docker' if it’s a Docker-based Linux agent
+        label 'windows-agent' // or simply 'docker' if it’s a Docker-based Linux agent
     }
 
     environment {
