@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'windows-agent' // or simply 'docker' if it’s a Docker-based Linux agent
+        label 'windows-agent'
     }
 
     environment {
@@ -14,14 +14,24 @@ pipeline {
             }
         }
 
+        stage('Clean Previous Builds') {
+            steps {
+                script {
+                    echo 'Cleaning up previous builds...'
+                    bat '''
+                        docker stop ${TEST_CONTAINER_NAME} || true
+                        docker rm ${TEST_CONTAINER_NAME} || true
+                        docker rmi -f rest-assured-tests || true
+                    '''
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
                     echo 'Building Docker Image...'
-                    sh '''
-                        set -e
-                        docker build -t rest-assured-tests .
-                    '''
+                    bat 'docker build -t rest-assured-tests .'
                 }
             }
         }
@@ -30,7 +40,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running tests in Docker...'
-                    sh 'docker-compose -f ./docker-compose.yml up --abort-on-container-exit'
+                    bat 'docker-compose -f ./docker-compose.yml up --abort-on-container-exit'
                 }
             }
         }
@@ -41,7 +51,7 @@ pipeline {
                     allowMissing: true,
                     alwaysLinkToLastBuild: true,
                     keepAll: true,
-                    reportDir: 'target',
+                    reportDir: 'target/cucumber-reports',
                     reportFiles: 'cucumber-reports.html',
                     reportName: 'API Test Report'
                 ])
@@ -53,7 +63,7 @@ pipeline {
         always {
             script {
                 echo 'Cleaning up Docker environment...'
-                sh '''
+                bat '''
                     docker-compose -f ./docker-compose.yml down -v || true
                     docker rmi -f rest-assured-tests || true
                 '''
