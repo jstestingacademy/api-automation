@@ -18,8 +18,7 @@ pipeline {
             steps {
                 script {
                     echo 'Building Docker Image...'
-                    sh '''
-                        set -e
+                    bat '''
                         docker build -t rest-assured-tests .
                     '''
                 }
@@ -30,7 +29,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running tests in Docker...'
-                    sh 'docker-compose -f ./docker-compose.yml up --abort-on-container-exit'
+                    bat 'docker-compose -f ./docker-compose.yml up --abort-on-container-exit'
                 }
             }
         }
@@ -53,9 +52,9 @@ pipeline {
         always {
             script {
                 echo 'Cleaning up Docker environment...'
-                sh '''
-                    docker-compose -f ./docker-compose.yml down -v || true
-                    docker rmi -f rest-assured-tests || true
+                bat '''
+                    docker-compose -f ./docker-compose.yml down -v || exit 0
+                    docker rmi -f rest-assured-tests || exit 0
                 '''
             }
         }
