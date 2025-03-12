@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'maven:3.9.5-eclipse-temurin-17'
+        }
+    }
     
     environment {
         TEST_CONTAINER_NAME = 'rest-assured-tests'
@@ -9,13 +13,6 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git branch: 'main', url: 'https://github.com/jstestingacademy/api-automation.git'
-            }
-        }
-
-        stage('Test Docker Access') {
-            steps {
-                sh 'docker --version' // Check Docker access
-                sh 'docker ps'        // List running containers
             }
         }
 
@@ -47,11 +44,11 @@ pipeline {
 
     post {
         always {
-            echo 'Cleaning up Docker environment...'
-            sh 'docker-compose down || true'
-            sh 'docker rmi -f rest-assured-tests || true'
+            script {
+                echo 'Cleaning up Docker environment...'
+                sh 'docker-compose down || true'
+                sh 'docker rmi -f rest-assured-tests || true'
+            }
         }
     }
-}
-
 }
