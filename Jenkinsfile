@@ -4,7 +4,7 @@ pipeline {
             image 'maven:3.9.5-eclipse-temurin-17'
         }
     }
-
+    
     environment {
         TEST_CONTAINER_NAME = 'rest-assured-tests'
     }
@@ -24,7 +24,7 @@ pipeline {
 
         stage('Run Tests in Docker') {
             steps {
-                sh 'docker compose up --abort-on-container-exit'
+                sh 'docker-compose up --abort-on-container-exit'
             }
         }
 
@@ -34,7 +34,7 @@ pipeline {
                     allowMissing: true,
                     alwaysLinkToLastBuild: true,
                     keepAll: true,
-                    reportDir: 'target/cucumber-reports',
+                    reportDir: 'target',
                     reportFiles: 'cucumber-reports.html',
                     reportName: 'API Test Report'
                 ])
@@ -44,10 +44,11 @@ pipeline {
 
     post {
         always {
-            sh 'docker compose down -v'
-            sh 'docker rmi -f rest-assured-tests || true'
-            sh 'docker system prune -f'
+            script {
+                // Run cleanup inside Docker context
+                sh 'docker-compose down || true'
+                sh 'docker rmi -f rest-assured-tests || true'
+            }
         }
     }
 }
-
