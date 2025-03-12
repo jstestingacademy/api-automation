@@ -44,10 +44,15 @@ pipeline {
 
     post {
         always {
-            script {
-                // Run cleanup inside Docker context
-                sh 'docker-compose down || true'
-                sh 'docker rmi -f rest-assured-tests || true'
+            // Surround in a node block to provide hudson.FilePath context
+            node {
+                script {
+                    echo 'Cleaning up Docker environment...'
+                    docker.image('maven:3.9.5-eclipse-temurin-17').inside {
+                        sh 'docker-compose down || true'
+                        sh 'docker rmi -f rest-assured-tests || true'
+                    }
+                }
             }
         }
     }
