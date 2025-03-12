@@ -44,8 +44,8 @@ pipeline {
 
     post {
         always {
-            // Surround in a node block to provide hudson.FilePath context
-            node {
+            // Use an empty label ('') to run on any available agent
+            node('') {
                 script {
                     echo 'Cleaning up Docker environment...'
                     docker.image('maven:3.9.5-eclipse-temurin-17').inside {
