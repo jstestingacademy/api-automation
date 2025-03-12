@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'windows-agent'
+        label 'linux-agent' // or simply 'docker' if it’s a Docker-based Linux agent
     }
 
     environment {
@@ -18,7 +18,8 @@ pipeline {
             steps {
                 script {
                     echo 'Building Docker Image...'
-                    bat '''
+                    sh '''
+                        set -e
                         docker build -t rest-assured-tests .
                     '''
                 }
@@ -29,7 +30,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running tests in Docker...'
-                    bat 'docker-compose -f ./docker-compose.yml up --abort-on-container-exit'
+                    sh 'docker-compose -f ./docker-compose.yml up --abort-on-container-exit'
                 }
             }
         }
@@ -52,9 +53,9 @@ pipeline {
         always {
             script {
                 echo 'Cleaning up Docker environment...'
-                bat '''
-                    docker-compose -f ./docker-compose.yml down -v || exit 0
-                    docker rmi -f rest-assured-tests || exit 0
+                sh '''
+                    docker-compose -f ./docker-compose.yml down -v || true
+                    docker rmi -f rest-assured-tests || true
                 '''
             }
         }
